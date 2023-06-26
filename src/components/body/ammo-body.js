@@ -46,7 +46,7 @@ let AmmoBody = {
   schema: {
     loadedEvent: { default: "" },
     mass: { default: 1 },
-    gravity: { type: "vec3", default: { x: 0, y: -9.8, z: 0 } },
+    gravity: { type: "vec3", default: { x: undefined, y: undefined, z: undefined } },
     linearDamping: { default: 0.01 },
     angularDamping: { default: 0.01 },
     linearSleepingThreshold: { default: 1.6 },
@@ -143,12 +143,18 @@ let AmmoBody = {
       this.body.setAngularFactor(angularFactor);
       Ammo.destroy(angularFactor);
 
-      const gravity = new Ammo.btVector3(data.gravity.x, data.gravity.y, data.gravity.z);
-      if (!almostEqualsBtVector3(0.001, gravity, this.system.driver.physicsWorld.getGravity())) {
-        this.body.setGravity(gravity);
-        this.body.setFlags(RIGID_BODY_FLAGS.DISABLE_WORLD_GRAVITY);
+      
+      if (data.gravity.x !== undefined &&
+          data.gravity.y !== undefined &&
+          data.gravity.z !== undefined) {
+            
+        const gravity = new Ammo.btVector3(data.gravity.x, data.gravity.y, data.gravity.z);
+        if (!almostEqualsBtVector3(0.001, gravity, this.system.driver.physicsWorld.getGravity())) {
+          this.body.setGravity(gravity);
+          this.body.setFlags(RIGID_BODY_FLAGS.DISABLE_WORLD_GRAVITY);
+        }
+        Ammo.destroy(gravity);
       }
-      Ammo.destroy(gravity);
 
       this.updateCollisionFlags();
 
@@ -305,14 +311,23 @@ let AmmoBody = {
       }
 
       if (!almostEqualsVector3(0.001, prevData.gravity, data.gravity)) {
-        const gravity = new Ammo.btVector3(data.gravity.x, data.gravity.y, data.gravity.z);
-        if (!almostEqualsBtVector3(0.001, gravity, this.system.driver.physicsWorld.getGravity())) {
-          this.body.setFlags(RIGID_BODY_FLAGS.DISABLE_WORLD_GRAVITY);
-        } else {
+
+        if (data.gravity.x !== undefined &&
+            data.gravity.y !== undefined &&
+            data.gravity.z !== undefined) {
+
+          const gravity = new Ammo.btVector3(data.gravity.x, data.gravity.y, data.gravity.z);
+          if (!almostEqualsBtVector3(0.001, gravity, this.system.driver.physicsWorld.getGravity())) {
+            this.body.setFlags(RIGID_BODY_FLAGS.DISABLE_WORLD_GRAVITY);
+          } else {
+            this.body.setFlags(RIGID_BODY_FLAGS.NONE);
+          }
+          this.body.setGravity(gravity);
+          Ammo.destroy(gravity);
+        }
+        else {
           this.body.setFlags(RIGID_BODY_FLAGS.NONE);
         }
-        this.body.setGravity(gravity);
-        Ammo.destroy(gravity);
       }
 
       if (
