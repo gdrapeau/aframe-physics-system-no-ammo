@@ -26,7 +26,7 @@ window.CANNON = window.CANNON || CANNON;
 /**
  * CANNON.shape2mesh
  *
- * Source: http://schteppe.github.io/cannon.js/build/cannon.demo.js
+ * Source: https://schteppe.github.io/cannon.js/build/cannon.demo.js
  * Author: @schteppe
  */
 var CANNON = require('cannon-es');
@@ -83,7 +83,7 @@ CANNON.shape2mesh = function(body){
             break;
 
         case CANNON.Shape.types.CONVEXPOLYHEDRON:
-            
+
             // Add vertices
             var positions = []
             for (var i = 0; i < shape.vertices.length; i++) {
@@ -16256,7 +16256,7 @@ let AmmoBody = {
   schema: {
     loadedEvent: { default: "" },
     mass: { default: 1 },
-    gravity: { type: "vec3", default: { x: 0, y: -9.8, z: 0 } },
+    gravity: { type: "vec3", default: { x: undefined, y: undefined, z: undefined } },
     linearDamping: { default: 0.01 },
     angularDamping: { default: 0.01 },
     linearSleepingThreshold: { default: 1.6 },
@@ -16353,12 +16353,18 @@ let AmmoBody = {
       this.body.setAngularFactor(angularFactor);
       Ammo.destroy(angularFactor);
 
-      const gravity = new Ammo.btVector3(data.gravity.x, data.gravity.y, data.gravity.z);
-      if (!almostEqualsBtVector3(0.001, gravity, this.system.driver.physicsWorld.getGravity())) {
-        this.body.setGravity(gravity);
-        this.body.setFlags(RIGID_BODY_FLAGS.DISABLE_WORLD_GRAVITY);
+      
+      if (data.gravity.x !== undefined &&
+          data.gravity.y !== undefined &&
+          data.gravity.z !== undefined) {
+            
+        const gravity = new Ammo.btVector3(data.gravity.x, data.gravity.y, data.gravity.z);
+        if (!almostEqualsBtVector3(0.001, gravity, this.system.driver.physicsWorld.getGravity())) {
+          this.body.setGravity(gravity);
+          this.body.setFlags(RIGID_BODY_FLAGS.DISABLE_WORLD_GRAVITY);
+        }
+        Ammo.destroy(gravity);
       }
-      Ammo.destroy(gravity);
 
       this.updateCollisionFlags();
 
@@ -16515,14 +16521,23 @@ let AmmoBody = {
       }
 
       if (!almostEqualsVector3(0.001, prevData.gravity, data.gravity)) {
-        const gravity = new Ammo.btVector3(data.gravity.x, data.gravity.y, data.gravity.z);
-        if (!almostEqualsBtVector3(0.001, gravity, this.system.driver.physicsWorld.getGravity())) {
-          this.body.setFlags(RIGID_BODY_FLAGS.DISABLE_WORLD_GRAVITY);
-        } else {
+
+        if (data.gravity.x !== undefined &&
+            data.gravity.y !== undefined &&
+            data.gravity.z !== undefined) {
+
+          const gravity = new Ammo.btVector3(data.gravity.x, data.gravity.y, data.gravity.z);
+          if (!almostEqualsBtVector3(0.001, gravity, this.system.driver.physicsWorld.getGravity())) {
+            this.body.setFlags(RIGID_BODY_FLAGS.DISABLE_WORLD_GRAVITY);
+          } else {
+            this.body.setFlags(RIGID_BODY_FLAGS.NONE);
+          }
+          this.body.setGravity(gravity);
+          Ammo.destroy(gravity);
+        }
+        else {
           this.body.setFlags(RIGID_BODY_FLAGS.NONE);
         }
-        this.body.setGravity(gravity);
-        Ammo.destroy(gravity);
       }
 
       if (
@@ -19021,7 +19036,7 @@ module.exports.slerp = function ( a, b, t ) {
 
   var x = a[0], y = a[1], z = a[2], w = a[3];
 
-  // http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
+  // https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
 
   var cosHalfTheta = w * b[3] + x * b[0] + y * b[1] + z * b[2];
 
