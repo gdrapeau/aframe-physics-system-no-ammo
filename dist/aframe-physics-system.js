@@ -16353,18 +16353,7 @@ let AmmoBody = {
       this.body.setAngularFactor(angularFactor);
       Ammo.destroy(angularFactor);
 
-      
-      if (data.gravity.x !== undefined &&
-          data.gravity.y !== undefined &&
-          data.gravity.z !== undefined) {
-            
-        const gravity = new Ammo.btVector3(data.gravity.x, data.gravity.y, data.gravity.z);
-        if (!almostEqualsBtVector3(0.001, gravity, this.system.driver.physicsWorld.getGravity())) {
-          this.body.setGravity(gravity);
-          this.body.setFlags(RIGID_BODY_FLAGS.DISABLE_WORLD_GRAVITY);
-        }
-        Ammo.destroy(gravity);
-      }
+      this._updateBodyGravity(data.gravity)
 
       this.updateCollisionFlags();
 
@@ -16382,6 +16371,26 @@ let AmmoBody = {
   tick: function() {
     if (this.system.initialized && !this.isLoaded && this.loadedEventFired) {
       this.initBody();
+    }
+  },
+
+  _updateBodyGravity(gravity) {
+
+    if (gravity.x !== undefined &&
+        gravity.y !== undefined &&
+        gravity.z !== undefined) {
+      const gravityBtVec = new Ammo.btVector3(gravity.x, gravity.y, gravity.z);
+      if (!almostEqualsBtVector3(0.001, gravityBtVec, this.system.driver.physicsWorld.getGravity())) {
+        this.body.setFlags(RIGID_BODY_FLAGS.DISABLE_WORLD_GRAVITY);
+      } else {
+        this.body.setFlags(RIGID_BODY_FLAGS.NONE);
+      }
+      this.body.setGravity(gravityBtVec);
+      Ammo.destroy(gravityBtVec);
+    }
+    else {
+      // no per-body gravity specified - just use world gravity
+      this.body.setFlags(RIGID_BODY_FLAGS.NONE);
     }
   },
 
@@ -16521,23 +16530,7 @@ let AmmoBody = {
       }
 
       if (!almostEqualsVector3(0.001, prevData.gravity, data.gravity)) {
-
-        if (data.gravity.x !== undefined &&
-            data.gravity.y !== undefined &&
-            data.gravity.z !== undefined) {
-
-          const gravity = new Ammo.btVector3(data.gravity.x, data.gravity.y, data.gravity.z);
-          if (!almostEqualsBtVector3(0.001, gravity, this.system.driver.physicsWorld.getGravity())) {
-            this.body.setFlags(RIGID_BODY_FLAGS.DISABLE_WORLD_GRAVITY);
-          } else {
-            this.body.setFlags(RIGID_BODY_FLAGS.NONE);
-          }
-          this.body.setGravity(gravity);
-          Ammo.destroy(gravity);
-        }
-        else {
-          this.body.setFlags(RIGID_BODY_FLAGS.NONE);
-        }
+        this._updateBodyGravity(data.gravity)
       }
 
       if (
