@@ -14130,7 +14130,7 @@ exports.createHACDShapes = (function() {
       return [];
     }
 
-    const bounds = _computeBounds(root);
+    const bounds = _computeBounds(root, options);
     const scale = _computeScale(root, options);
 
     let vertexCount = 0;
