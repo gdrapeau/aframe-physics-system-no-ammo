@@ -116,24 +116,24 @@ See [examples/ammo.html](/examples/ammo.html) for a working sample.
 
 An `ammo-body` component may be added to any entity in a scene. While having only an `ammo-body` will technically give you a valid physics body in the scene, only after adding an `ammo-shape` will your entity begin to collide with other objects.
 
-| Property                 | Default    | Description                                                                                                                                             |
-| ------------------------ |----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| type                     | `dynamic`  | Options: `dynamic`, `static`, `kinematic`. See [ammo-body type](#ammo-body-type).                                                                       |
-| loadedEvent              | —          | Optional event to wait for before the body attempt to initialize.                                                                                       |
-| mass                     | `1`        | Simulated mass of the object, >= 0.                                                                                                                     |
-| gravity                  | `0 -9.8 0` | Set the gravity for this specific object.                                                                                                               |
-| linearDamping            | `0.01`     | Resistance to movement.                                                                                                                                 |
-| angularDamping           | `0.01`     | Resistance to rotation.                                                                                                                                 |
-| linearSleepingThreshold  | `1.6`      | Minimum movement cutoff before a body can enter `activationState: wantsDeactivation`                                                                   |
-| angularSleepingThreshold | `2.5`      | Minimum rotation cutoff before a body can enter `activationState: wantsDeactivation`                                                                   |
-| angularFactor            | `1 1 1`    | Constrains how much the body is allowed to rotate on an axis. E.g. `1 0 1` will prevent rotation around y axis.                                         |
-| activationState          | `active`   | Options: `active`, `islandSleeping`, `wantsDeactivation`, `disableDeactivation`, `disableSimulation`. See [Activation States](#activation-states)   |
-| emitCollisionEvents      | `false`    | Set to true to enable firing of `collidestart` and `collideend` events on this entity. See [Events](#events).                                           |
-| disableCollision         | `false`    | Set to true to disable object from colliding with all others.                                                                                           |
-| collisionFilterGroup     | `1`        | 32-bit bitmask to determine what collision "group" this object belongs to. See: [Collision Filtering](#collision-filtering).                            |
-| collisionFilterMask      | `1`        | 32-bit bitmask to determine what collision "groups" this object should collide with. See: [Collision Filtering](#collision-filtering).                 |
-| scaleAutoUpdate          | `true`     | Should the shapes of the objecct be automatically scaled to match the scale of the entity.                                                              |
-| restitution              | 0          | Coefficient of restitution (bounciness).  Note that this must be set to a non-zero value on *both* objects to get bounce from a collision.<br/>This value cannot be changed after initialization of the `ammo-body`.   |
+| Property                 | Default                         | Description                                                  |
+| ------------------------ | ------------------------------- | ------------------------------------------------------------ |
+| type                     | `dynamic`                       | Options: `dynamic`, `static`, `kinematic`. See [ammo-body type](#ammo-body-type). |
+| loadedEvent              | —                               | Optional event to wait for before the body attempt to initialize. |
+| mass                     | `1`                             | Simulated mass of the object, >= 0.                          |
+| gravity                  | `undefined undefined undefined` | Set the gravity for this specific object (if undefined, world gravity will be used - which defaults to `0 -9.8 0`) |
+| linearDamping            | `0.01`                          | Resistance to movement.                                      |
+| angularDamping           | `0.01`                          | Resistance to rotation.                                      |
+| linearSleepingThreshold  | `1.6`                           | Minimum movement cutoff before a body can enter `activationState: wantsDeactivation` |
+| angularSleepingThreshold | `2.5`                           | Minimum rotation cutoff before a body can enter `activationState: wantsDeactivation` |
+| angularFactor            | `1 1 1`                         | Constrains how much the body is allowed to rotate on an axis. E.g. `1 0 1` will prevent rotation around y axis. |
+| activationState          | `active`                        | Options: `active`, `islandSleeping`, `wantsDeactivation`, `disableDeactivation`, `disableSimulation`. See [Activation States](#activation-states) |
+| emitCollisionEvents      | `false`                         | Set to true to enable firing of `collidestart` and `collideend` events on this entity. See [Events](#events). |
+| disableCollision         | `false`                         | Set to true to disable object from colliding with all others. |
+| collisionFilterGroup     | `1`                             | 32-bit bitmask to determine what collision "group" this object belongs to. See: [Collision Filtering](#collision-filtering). |
+| collisionFilterMask      | `1`                             | 32-bit bitmask to determine what collision "groups" this object should collide with. See: [Collision Filtering](#collision-filtering). |
+| scaleAutoUpdate          | `true`                          | Should the shapes of the object be automatically scaled to match the scale of the entity. |
+| restitution              | 0                               | Coefficient of restitution (bounciness).  Note that this must be set to a non-zero value on *both* objects to get bounce from a collision.<br/>This value cannot be changed after initialization of the `ammo-body`. |
 
 #### `ammo-body` type
 
