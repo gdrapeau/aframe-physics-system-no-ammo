@@ -58,7 +58,9 @@ AFRAME.registerComponent('force-pushable', {
     const el = this.el
     const force = this.force
     const impulseBt = this.impulseBtVector
-    force.copy(el.object3D.position)
+    const pusher = e.detail.cursorEl.object3D
+    pusher.localToWorld(pusher.position)
+    force.copy(el.object3D.position.sub(pusher.position))
     force.normalize();
 
     // not sure about units, but force seems much stronger with Ammo than Cannon, so scaling down
