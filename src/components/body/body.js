@@ -71,12 +71,17 @@ var Body = {
         type: ShapeType[data.shape.toUpperCase()]
       });
 
-      var { shape, offset, orientation } = mesh2shape(this.el.object3D, options);
+      const shapeInfo = mesh2shape(this.el.object3D, options);
+      let shape, offset, orientation;
+      if (shapeInfo) {
+        ({ shape, offset, orientation } = shapeInfo);
+      }
 
       if (!shape) {
         el.addEventListener('object3dset', this.initBody.bind(this));
         return;
       }
+
       this.body.addShape(shape, offset, orientation);
 
       // Show wireframe
