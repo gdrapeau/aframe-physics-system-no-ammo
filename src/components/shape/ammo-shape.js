@@ -38,6 +38,21 @@ var AmmoShape = {
   multiple: true,
 
   init: function() {
+    if (this.data.fit !== FIT.MANUAL) {
+      if (this.el.object3DMap.mesh) {
+	this.mesh = this.el.object3DMap.mesh;
+      } else {
+	const self = this;
+	this.el.addEventListener("object3dset", function (e) {
+	  if (e.detail.type === "mesh") {
+	    self.init();
+	  }
+	});
+	console.log("Cannot use FIT.ALL without object3DMap.mesh. Waiting for it to be set.");
+        return;
+      }
+    }
+
     this.system = this.el.sceneEl.systems.physics;
     this.collisionShapes = [];
 
@@ -52,13 +67,6 @@ var AmmoShape = {
     if (!this.body) {
       console.warn("body not found");
       return;
-    }
-    if (this.data.fit !== FIT.MANUAL) {
-      if (!this.el.object3DMap.mesh) {
-        console.error("Cannot use FIT.ALL without object3DMap.mesh");
-        return;
-      }
-      this.mesh = this.el.object3DMap.mesh;
     }
     this.body.addShapeComponent(this);
   },
