@@ -3,7 +3,8 @@ module.exports = function (config) {
     basePath: '../',
     browserify: {
       debug: true,
-      paths: ['src']
+      paths: ['src'],
+      plugin: [ 'esmify' ]
     },
     browsers: ['Firefox', 'Chrome'],
     client: {
