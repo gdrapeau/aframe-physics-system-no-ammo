@@ -365,7 +365,8 @@ let AmmoBody = {
     if (this.localScaling) Ammo.destroy(this.localScaling);
     if (this.compoundShape) Ammo.destroy(this.compoundShape);
     if (this.body) {
-      Ammo.destroy(this.body);
+      this.system.driver.removeBody(this.body)
+      //Ammo.destroy(this.body);
       delete this.body;
     }
     Ammo.destroy(this.rbInfo);
