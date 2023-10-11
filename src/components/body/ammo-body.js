@@ -241,7 +241,20 @@ let AmmoBody = {
 
   _createCollisionShape: function(shapeComponent) {
     const data = shapeComponent.data;
-    const collisionShapes = threeToAmmo.createCollisionShapes(shapeComponent.getMesh(), data);
+    const vertices = [];
+    const matrices = [];
+    const indexes = [];
+
+    const root = shapeComponent.el.object3D;
+    const matrixWorld = root.matrixWorld;
+
+    threeToAmmo.iterateGeometries(root, data, (vertexArray, matrixArray, indexArray) => {
+      vertices.push(vertexArray);
+      matrices.push(matrixArray);
+      indexes.push(indexArray);
+    });
+
+    const collisionShapes = threeToAmmo.createCollisionShapes(vertices, matrices, indexes, matrixWorld.elements, data);
     shapeComponent.addShapes(collisionShapes);
     return;
   },

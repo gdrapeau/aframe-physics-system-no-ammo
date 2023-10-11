@@ -4,8 +4,8 @@
   "description": "Physics system for A-Frame VR, built on Cannon.js & Ammo.js",
   "main": "index.js",
   "scripts": {
-    "dev": "budo index.js:dist/aframe-physics-system.js -d examples --port 8000 -- -g browserify-shim",
-    "dist": "browserify -g browserify-shim index.js -o dist/aframe-physics-system.js && uglifyjs -c -o dist/aframe-physics-system.min.js -- dist/aframe-physics-system.js",
+    "dev": "budo index.js:dist/aframe-physics-system.js -d examples --port 8000 -- -g browserify-shim -p esmify",
+    "dist": "browserify -g browserify-shim index.js -o dist/aframe-physics-system.js -p esmify && uglifyjs -c -o dist/aframe-physics-system.min.js -- dist/aframe-physics-system.js",
     "test": "karma start ./tests/karma.conf.js",
     "test:once": "karma start ./tests/karma.conf.js --single-run",
     "test:firefox": "karma start ./tests/karma.conf.js --browsers Firefox",
@@ -44,9 +44,9 @@
     "aframe-stats-panel": "^0.2.1",
     "ammo-debug-drawer": "^0.1.0",
     "cannon-es": "^0.9.1",
-    "three-to-ammo": "^0.1.0",
-    "three-to-cannon": "^4.0.0",
     "patch-package": "^6.5.0",
+    "three-to-ammo": "^1.0.1",
+    "three-to-cannon": "^4.0.0",
     "webworkify": "^1.4.0"
   },
   "peerDependencies": {
@@ -61,6 +61,7 @@
     "chai": "^3.5.0",
     "chai-shallow-deep-equal": "^1.4.6",
     "envify": "^4.1.0",
+    "esmify": "^2.1.1",
     "karma": "^4.4.1",
     "karma-browserify": "^6.1.0",
     "karma-chai-shallow-deep-equal": "0.0.4",
