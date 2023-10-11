@@ -13815,7 +13815,6 @@ module.exports = AFRAME.registerComponent("ammo-constraint", {
         throw new Error("[constraint] Unexpected type: " + data.type);
     }
 
-    Ammo.destroy(bodyTransform);
     Ammo.destroy(targetTransform);
 
     return constraint;
@@ -14073,7 +14072,7 @@ let AmmoBody = {
     const root = shapeComponent.el.object3D;
     const matrixWorld = root.matrixWorld;
 
-    threeToAmmo.iterateGeometries(root, {}, (vertexArray, matrixArray, indexArray) => {
+    threeToAmmo.iterateGeometries(root, data, (vertexArray, matrixArray, indexArray) => {
       vertices.push(vertexArray);
       matrices.push(matrixArray);
       indexes.push(indexArray);
@@ -14190,7 +14189,8 @@ let AmmoBody = {
     if (this.localScaling) Ammo.destroy(this.localScaling);
     if (this.compoundShape) Ammo.destroy(this.compoundShape);
     if (this.body) {
-      Ammo.destroy(this.body);
+      this.system.driver.removeBody(this.body)
+      //Ammo.destroy(this.body);
       delete this.body;
     }
     Ammo.destroy(this.rbInfo);
