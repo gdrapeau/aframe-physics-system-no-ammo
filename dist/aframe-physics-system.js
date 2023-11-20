@@ -476,16 +476,9 @@ AFRAME.registerComponent('stats-collector', {
 });
 
 },{}],4:[function(require,module,exports){
-"use strict";
+/* global Ammo,THREE */
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.DefaultBufferSize = exports.AmmoDebugDrawer = exports.AmmoDebugConstants = void 0;
-/* global Ammo */
-
-const DefaultBufferSize = exports.DefaultBufferSize = 3 * 1000000;
-const AmmoDebugConstants = exports.AmmoDebugConstants = {
+THREE.AmmoDebugConstants = {
   NoDebug: 0,
   DrawWireframe: 1,
   DrawAabb: 2,
@@ -498,44 +491,50 @@ const AmmoDebugConstants = exports.AmmoDebugConstants = {
   EnableSatComparison: 256,
   DisableBulletLCP: 512,
   EnableCCD: 1024,
-  DrawConstraints: 1 << 11,
-  //2048
-  DrawConstraintLimits: 1 << 12,
-  //4096
-  FastWireframe: 1 << 13,
-  //8192
-  DrawNormals: 1 << 14,
-  //16384
+  DrawConstraints: 1 << 11, //2048
+  DrawConstraintLimits: 1 << 12, //4096
+  FastWireframe: 1 << 13, //8192
+  DrawNormals: 1 << 14, //16384
+  DrawOnTop: 1 << 15, //32768
   MAX_DEBUG_DRAW_MODE: 0xffffffff
-};
-const setXYZ = function (array, index, x, y, z) {
-  index *= 3;
-  array[index + 0] = x;
-  array[index + 1] = y;
-  array[index + 2] = z;
 };
 
 /**
  * An implementation of the btIDebugDraw interface in Ammo.js, for debug rendering of Ammo shapes
  * @class AmmoDebugDrawer
- * @param {Uint32Array} indexArray
- * @param {Float32Array} verticessArray
- * @param {Float32Array} colorsArray
+ * @param {THREE.Scene} scene
  * @param {Ammo.btCollisionWorld} world
  * @param {object} [options]
  */
-const AmmoDebugDrawer = function (indexArray, verticesArray, colorsArray, world, options) {
+THREE.AmmoDebugDrawer = function(scene, world, options) {
+  this.scene = scene;
   this.world = world;
   options = options || {};
-  this.verticesArray = verticesArray;
-  this.colorsArray = colorsArray;
-  this.indexArray = indexArray;
-  this.debugDrawMode = options.debugDrawMode || AmmoDebugConstants.DrawWireframe;
+
+  this.debugDrawMode = options.debugDrawMode || THREE.AmmoDebugConstants.DrawWireframe;
+  var drawOnTop = this.debugDrawMode & THREE.AmmoDebugConstants.DrawOnTop || false;
+  var maxBufferSize = options.maxBufferSize || 1000000;
+
+  this.geometry = new THREE.BufferGeometry();
+  var vertices = new Float32Array(maxBufferSize * 3);
+  var colors = new Float32Array(maxBufferSize * 3);
+
+  this.geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3).setUsage(THREE.DynamicDrawUsage));
+  this.geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3).setUsage(THREE.DynamicDrawUsage));
+
   this.index = 0;
-  if (this.indexArray) {
-    Atomics.store(this.indexArray, 0, this.index);
-  }
+
+  var material = new THREE.LineBasicMaterial({
+    vertexColors: true,
+    depthTest: !drawOnTop
+  });
+
+  this.mesh = new THREE.LineSegments(this.geometry, material);
+  if (drawOnTop) this.mesh.renderOrder = 999;
+  this.mesh.frustumCulled = false;
+
   this.enabled = false;
+
   this.debugDrawer = new Ammo.DebugDrawer();
   this.debugDrawer.drawLine = this.drawLine.bind(this);
   this.debugDrawer.drawContactPoint = this.drawContactPoint.bind(this);
@@ -546,83 +545,99 @@ const AmmoDebugDrawer = function (indexArray, verticesArray, colorsArray, world,
   this.debugDrawer.enable = this.enable.bind(this);
   this.debugDrawer.disable = this.disable.bind(this);
   this.debugDrawer.update = this.update.bind(this);
+
   this.world.setDebugDrawer(this.debugDrawer);
 };
-exports.AmmoDebugDrawer = AmmoDebugDrawer;
-AmmoDebugDrawer.prototype = function () {
+
+THREE.AmmoDebugDrawer.prototype = function() {
   return this.debugDrawer;
 };
-AmmoDebugDrawer.prototype.enable = function () {
+
+THREE.AmmoDebugDrawer.prototype.enable = function() {
   this.enabled = true;
+  this.scene.add(this.mesh);
 };
-AmmoDebugDrawer.prototype.disable = function () {
+
+THREE.AmmoDebugDrawer.prototype.disable = function() {
   this.enabled = false;
+  this.scene.remove(this.mesh);
 };
-AmmoDebugDrawer.prototype.update = function () {
+
+THREE.AmmoDebugDrawer.prototype.update = function() {
   if (!this.enabled) {
     return;
   }
-  if (this.indexArray) {
-    if (Atomics.load(this.indexArray, 0) === 0) {
-      this.index = 0;
-      this.world.debugDrawWorld();
-      Atomics.store(this.indexArray, 0, this.index);
-    }
-  } else {
-    this.index = 0;
-    this.world.debugDrawWorld();
+
+  if (this.index != 0) {
+    this.geometry.attributes.position.needsUpdate = true;
+    this.geometry.attributes.color.needsUpdate = true;
   }
+
+  this.index = 0;
+
+  this.world.debugDrawWorld();
+
+  this.geometry.setDrawRange(0, this.index);
 };
-AmmoDebugDrawer.prototype.drawLine = function (from, to, color) {
+
+THREE.AmmoDebugDrawer.prototype.drawLine = function(from, to, color) {
   const heap = Ammo.HEAPF32;
   const r = heap[(color + 0) / 4];
   const g = heap[(color + 4) / 4];
   const b = heap[(color + 8) / 4];
+
   const fromX = heap[(from + 0) / 4];
   const fromY = heap[(from + 4) / 4];
   const fromZ = heap[(from + 8) / 4];
-  setXYZ(this.verticesArray, this.index, fromX, fromY, fromZ);
-  setXYZ(this.colorsArray, this.index++, r, g, b);
+  this.geometry.attributes.position.setXYZ(this.index, fromX, fromY, fromZ);
+  this.geometry.attributes.color.setXYZ(this.index++, r, g, b);
+
   const toX = heap[(to + 0) / 4];
   const toY = heap[(to + 4) / 4];
   const toZ = heap[(to + 8) / 4];
-  setXYZ(this.verticesArray, this.index, toX, toY, toZ);
-  setXYZ(this.colorsArray, this.index++, r, g, b);
+  this.geometry.attributes.position.setXYZ(this.index, toX, toY, toZ);
+  this.geometry.attributes.color.setXYZ(this.index++, r, g, b);
 };
 
 //TODO: figure out how to make lifeTime work
-AmmoDebugDrawer.prototype.drawContactPoint = function (pointOnB, normalOnB, distance, lifeTime, color) {
+THREE.AmmoDebugDrawer.prototype.drawContactPoint = function(pointOnB, normalOnB, distance, lifeTime, color) {
   const heap = Ammo.HEAPF32;
   const r = heap[(color + 0) / 4];
   const g = heap[(color + 4) / 4];
   const b = heap[(color + 8) / 4];
+
   const x = heap[(pointOnB + 0) / 4];
   const y = heap[(pointOnB + 4) / 4];
   const z = heap[(pointOnB + 8) / 4];
-  setXYZ(this.verticesArray, this.index, x, y, z);
-  setXYZ(this.colorsArray, this.index++, r, g, b);
+  this.geometry.attributes.position.setXYZ(this.index, x, y, z);
+  this.geometry.attributes.color.setXYZ(this.index++, r, g, b);
+
   const dx = heap[(normalOnB + 0) / 4] * distance;
   const dy = heap[(normalOnB + 4) / 4] * distance;
   const dz = heap[(normalOnB + 8) / 4] * distance;
-  setXYZ(this.verticesArray, this.index, x + dx, y + dy, z + dz);
-  setXYZ(this.colorsArray, this.index++, r, g, b);
+  this.geometry.attributes.position.setXYZ(this.index, x + dx, y + dy, z + dz);
+  this.geometry.attributes.color.setXYZ(this.index++, r, g, b);
 };
-AmmoDebugDrawer.prototype.reportErrorWarning = function (warningString) {
-  if (Ammo.hasOwnProperty("UTF8ToString")) {
-    console.warn(Ammo.UTF8ToString(warningString));
+
+THREE.AmmoDebugDrawer.prototype.reportErrorWarning = function(warningString) {
+  if (Ammo.hasOwnProperty("Pointer_stringify")) {
+    console.warn(Ammo.Pointer_stringify(warningString));
   } else if (!this.warnedOnce) {
     this.warnedOnce = true;
-    console.warn("Cannot print warningString, please export UTF8ToString from Ammo.js in make.py");
+    console.warn("Cannot print warningString, please rebuild Ammo.js using 'debug' flag");
   }
 };
-AmmoDebugDrawer.prototype.draw3dText = function (location, textString) {
+
+THREE.AmmoDebugDrawer.prototype.draw3dText = function(location, textString) {
   //TODO
   console.warn("TODO: draw3dText");
 };
-AmmoDebugDrawer.prototype.setDebugMode = function (debugMode) {
+
+THREE.AmmoDebugDrawer.prototype.setDebugMode = function(debugMode) {
   this.debugDrawMode = debugMode;
 };
-AmmoDebugDrawer.prototype.getDebugMode = function () {
+
+THREE.AmmoDebugDrawer.prototype.getDebugMode = function() {
   return this.debugDrawMode;
 };
 
