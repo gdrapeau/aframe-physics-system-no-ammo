@@ -14202,7 +14202,7 @@ let AmmoBody = {
         // So if we are reporting collision events, preferable to
         // tolerate a small memory leak, by not destroying the 
         // Ammo body, rather than missing collision events.
-        Ammo.destroy(body);
+        Ammo.destroy(this.body);
       }
       delete this.body;
     }
