@@ -14188,24 +14188,15 @@ let AmmoBody = {
     if (this.triMesh) Ammo.destroy(this.triMesh);
     if (this.localScaling) Ammo.destroy(this.localScaling);
     if (this.compoundShape) Ammo.destroy(this.compoundShape);
+    if (this.body) {
+      Ammo.destroy(this.body);
+      delete this.body;
+    }
     Ammo.destroy(this.rbInfo);
     Ammo.destroy(this.msTransform);
     Ammo.destroy(this.motionState);
     Ammo.destroy(this.localInertia);
     Ammo.destroy(this.rotation);
-    if (this.body) {
-      if (!this.data.emitCollisionEvents) {
-        // As per issue 47 / PR 48 there is a strange bug
-        // not yet understood, where destroying an Ammo body 
-        // leads to subsequent issues reporting collision events.
-        // 
-        // So if we are reporting collision events, preferable to
-        // tolerate a small memory leak, by not destroying the 
-        // Ammo body, rather than missing collision events.
-        Ammo.destroy(this.body);
-      }
-      delete this.body;
-    }
   },
 
   beforeStep: function() {
@@ -15423,7 +15414,11 @@ AmmoDriver.prototype.init = function(worldConfig) {
 /* @param {Ammo.btCollisionObject} body */
 AmmoDriver.prototype.addBody = function(body, group, mask) {
   this.physicsWorld.addRigidBody(body, group, mask);
-  this.els.set(Ammo.getPointer(body), body.el);
+  const bodyptr = Ammo.getPointer(body);
+  this.els.set(bodyptr, body.el);
+  this.collisions.set(bodyptr, []);
+  this.collisionKeys.push(bodyptr);
+  this.currentCollisions.set(bodyptr, new Set());
 };
 
 /* @param {Ammo.btCollisionObject} body */
@@ -15465,10 +15460,6 @@ AmmoDriver.prototype.step = function(deltaTime) {
     }
 
     if (collided) {
-      if (!this.collisions.has(body0ptr)) {
-        this.collisions.set(body0ptr, []);
-        this.collisionKeys.push(body0ptr);
-      }
       if (this.collisions.get(body0ptr).indexOf(body1ptr) === -1) {
         this.collisions.get(body0ptr).push(body1ptr);
         if (this.eventListeners.indexOf(body0ptr) !== -1) {
@@ -15477,9 +15468,6 @@ AmmoDriver.prototype.step = function(deltaTime) {
         if (this.eventListeners.indexOf(body1ptr) !== -1) {
           this.els.get(body1ptr).emit("collidestart", { targetEl: this.els.get(body0ptr) });
         }
-      }
-      if (!this.currentCollisions.has(body0ptr)) {
-        this.currentCollisions.set(body0ptr, new Set());
       }
       this.currentCollisions.get(body0ptr).add(body1ptr);
     }
