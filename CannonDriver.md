@@ -219,7 +219,7 @@ In A-Frame, each entity's `CANNON.Body` instance is exposed on the `el.body` pro
 var el = sceneEl.querySelector('#nyan');
 el.body.applyImpulse(
   /* impulse */        new CANNON.Vec3(0, 1, -1),
-  /* world position */ new CANNON.Vec3().copy(el.getComputedAttribute('position'))
+  /* world position */ new CANNON.Vec3().copy(el.getAttribute('position'))
 );
 ```
 
