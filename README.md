@@ -42,7 +42,7 @@ For each of these drivers, there is the potential for specific limitations that 
 
 - in the physics engine itself
 - in the version of the physics engine being used (which may not be the latest version)
-- or, in the integration of the phsyics engine with aframe-physics-system (or physx).
+- or, in the integration of the physics engine with aframe-physics-system (or physx).
 
 See [Driver-specific Limitations](#driver-specific-limitations) below for a list of known driver-specific limitations.
 
@@ -71,7 +71,7 @@ Although the syntax for each driver is different, the basic concepts are the sam
 - A `physics` component is added to the `<a-scene>`.  The `driver` property of this component indicates which driver to use.  The `debug` property can be set to `true` to get some useful visual hints from the physics engine.  There are also various other driver-specific scene-level settings.
 - For physics to apply to an entity, it must be identified as a physics body.
   - In Cannon.js, this is done by applying either the `dynamic-body` or `static-body` component.
-  - In Ammo.js, a physics body each physics body needs two components: `ammo-body` (to define the phsyics properties of the body) and `ammo-shape` (to define its shape).  The `type` property on `ammo-body`is used to specify whether the body is `dynamic`, `kinematic` or `static`
+  - In Ammo.js, a physics body each physics body needs two components: `ammo-body` (to define the physics properties of the body) and `ammo-shape` (to define its shape).  The `type` property on `ammo-body`is used to specify whether the body is `dynamic`, `kinematic` or `static`
 - Dynamic bodies are bodies that are under the control of the physics system (e.g. a ball in a game)
 - Static bodies are bodies that influence the movement of other bodies, but are not themselves moved by the physics system (e.g. the walls of a room)
 - Kinematic bodies are bodies that can move *and* influence the movement of dynamic bodies, but are not themselves  moved by the physics system.  Players' controllers or hands are often kinematic objects.
