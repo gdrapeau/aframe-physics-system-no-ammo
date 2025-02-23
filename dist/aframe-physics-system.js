@@ -313,13 +313,15 @@ AFRAME.registerComponent('stats-row', {
       this.counterValues[property] = counterValue
     })
 
-    this.updateData = this.updateData.bind(this)
-    this.el.addEventListener(this.data.event, this.updateData)
+    this.updateStatsData = this.updateStatsData.bind(this)
+    this.el.addEventListener(this.data.event, this.updateStatsData)
 
     this.splitCache = {}
   },
 
-  updateData(e) {
+  updateStatsData(e) {
+
+    if (!this.data.properties) return
     
     this.data.properties.forEach((property) => {
       const split = this.splitDot(property);
@@ -397,7 +399,7 @@ AFRAME.registerComponent('stats-collector', {
 
   statsReceived(e) {
 
-    this.updateData(e.detail)
+    this.updateStatsData(e.detail)
 
     this.counter++ 
     if (this.counter === this.data.outputFrequency) {
@@ -406,7 +408,7 @@ AFRAME.registerComponent('stats-collector', {
     }
   },
 
-  updateData(detail) {
+  updateStatsData(detail) {
 
     this.data.properties.forEach((property) => {
       let value = detail;
@@ -12312,8 +12314,6 @@ const iterateGeometries = exports.iterateGeometries = function () {
   const inverse = new THREE.Matrix4();
   return function (root, options, cb) {
     inverse.copy(root.matrixWorld).invert();
-    const scale = new THREE.Vector3();
-    scale.setFromMatrixScale(root.matrixWorld);
     root.traverse(mesh => {
       const transform = new THREE.Matrix4();
       if (mesh.isMesh && mesh.name !== "Sky" && (options.includeInvisible || mesh.el && mesh.el.object3D.visible || mesh.visible)) {
@@ -12325,7 +12325,30 @@ const iterateGeometries = exports.iterateGeometries = function () {
         }
         // todo: might want to return null xform if this is the root so that callers can avoid multiplying
         // things by the identity matrix
-        cb(mesh.geometry.isBufferGeometry ? mesh.geometry.attributes.position.array : mesh.geometry.vertices, transform.elements, mesh.geometry.index ? mesh.geometry.index.array : null);
+
+        let vertices;
+        if (mesh.geometry.isBufferGeometry) {
+          const verticesAttribute = mesh.geometry.attributes.position;
+          if (verticesAttribute.isInterleavedBufferAttribute) {
+            //
+            // An interleaved buffer attribute shares the underlying
+            // array with other attributes. We translate it to a
+            // regular array here to not carry this logic around in
+            // the shape api.
+            //
+            vertices = [];
+            for (let i = 0; i < verticesAttribute.count; i += 3) {
+              vertices.push(verticesAttribute.getX(i));
+              vertices.push(verticesAttribute.getY(i));
+              vertices.push(verticesAttribute.getZ(i));
+            }
+          } else {
+            vertices = verticesAttribute.array;
+          }
+        } else {
+          vertices = mesh.geometry.vertices;
+        }
+        cb(vertices, transform.elements, mesh.geometry.index ? mesh.geometry.index.array : null);
       }
     });
   };
