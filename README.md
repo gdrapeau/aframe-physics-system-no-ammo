@@ -131,7 +131,7 @@ This list is probably incomplete, so if you find an additional significant limit
 
   
 
-### phsyx
+### physx
 
 - Very few examples - a gap that needs filling!
 - Other limitations not known - suspect few limitations in the engine itself, but potentially many in terms of integration.
