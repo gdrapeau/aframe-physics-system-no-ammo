@@ -1,6 +1,6 @@
 # Cannon Driver
 
-[CANNON.js](https://schteppe.github.io/cannon.js/) is a native JavaScript physics library, which is one of the available choices of driver in aframe-physics-system
+[CANNON.js](https://pmndrs.github.io/cannon-es/) is a native JavaScript physics library, which is one of the available choices of driver in aframe-physics-system
 
 This page describes how to use aframe-physics-system with the Cannon Driver
 
@@ -204,7 +204,7 @@ Example:
 
 ## Using the CANNON.js API
 
-For more advanced physics, use the CANNON.js API with custom JavaScript and A-Frame components. The [CANNON.js documentation](https://schteppe.github.io/cannon.js/docs/) and source code offer good resources for learning to work with physics in JavaScript.
+For more advanced physics, use the CANNON.js API with custom JavaScript and A-Frame components. The [CANNON.js documentation](https://pmndrs.github.io/cannon-es/docs/index.html) and source code offer good resources for learning to work with physics in JavaScript.
 
 In A-Frame, each entity's `CANNON.Body` instance is exposed on the `el.body` property. To apply a quick push to an object, you might do the following:
 
@@ -291,9 +291,9 @@ More advanced configuration, including specifying different collision behaviors 
 
 Resources:
 
-* [CANNON.World](https://schteppe.github.io/cannon.js/docs/classes/World.html)
+* [CANNON.World](https://pmndrs.github.io/cannon-es/docs/classes/World.html)
 
-* [CANNON.ContactMaterial](https://schteppe.github.io/cannon.js/docs/classes/ContactMaterial.html)
+* [CANNON.ContactMaterial](https://pmndrs.github.io/cannon-es/docs/classes/ContactMaterial.html)
 
 
 ## Statistics
