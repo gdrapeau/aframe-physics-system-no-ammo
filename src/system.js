@@ -56,6 +56,7 @@ module.exports = AFRAME.registerSystem('physics', {
    * Initializes the physics system.
    */
   async init() {
+    console.log("init start og physics");
     var data = this.data;
 
     // If true, show wireframes around physics bodies.
@@ -135,6 +136,7 @@ module.exports = AFRAME.registerSystem('physics', {
     if (this.debug) {
       this.setDebug(true);
     }
+    console.log("init end of physics")
   },
 
   initStats() {
