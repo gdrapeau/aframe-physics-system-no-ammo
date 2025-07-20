@@ -8,7 +8,7 @@ const { TYPE } = require('./constants');
 var LocalDriver = require('./drivers/local-driver'),
     WorkerDriver = require('./drivers/worker-driver'),
     NetworkDriver = require('./drivers/network-driver'),
-    AmmoDriver = require('./drivers/ammo-driver');
+    AmmoDriver = {} ; //require('./drivers/ammo-driver');
 require('aframe-stats-panel')
 
 /**
