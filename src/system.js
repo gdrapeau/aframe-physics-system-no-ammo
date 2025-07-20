@@ -136,8 +136,10 @@ module.exports = AFRAME.registerSystem('physics', {
     if (this.debug) {
       this.setDebug(true);
     }
-    document.dispatchEvent(new CustomEvent('physics_loaded'))
-    console.log("init end of physics")
+    setTimeout(()=>{
+      document.dispatchEvent(new CustomEvent('physics_loaded'))
+    },0)
+    console.log("init end of physics 2")
   },
 
   initStats() {
