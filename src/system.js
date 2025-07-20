@@ -42,7 +42,7 @@ module.exports = AFRAME.registerSystem('physics', {
     debug:                          { default: false },
 
     // If using ammo, set the default rendering mode for debug
-    debugDrawMode: { default: THREE.AmmoDebugConstants.NoDebug },
+    debugDrawMode: { default: 0 }, // GD THREE.AmmoDebugConstants.NoDebug },
     // If using ammo, set the max number of steps per frame 
     maxSubSteps: { default: 4 },
     // If using ammo, set the framerate of the simulation
@@ -150,17 +150,17 @@ module.exports = AFRAME.registerSystem('physics', {
       this.statsBodyData = {};
 
       this.countBodies = {
-        "ammo": () => this.countBodiesAmmo(),
+        // GD "ammo": () => this.countBodiesAmmo(),
         "local": () => this.countBodiesCannon(false),
         "worker": () => this.countBodiesCannon(true)
       }
 
       this.bodyTypeToStatsPropertyMap = {
-        "ammo": {
-          [TYPE.STATIC] : "staticBodies",
-          [TYPE.KINEMATIC] : "kinematicBodies",
-          [TYPE.DYNAMIC] : "dynamicBodies",
-        }, 
+        // GD "ammo": {
+        //   [TYPE.STATIC] : "staticBodies",
+        //   [TYPE.KINEMATIC] : "kinematicBodies",
+        //   [TYPE.DYNAMIC] : "dynamicBodies",
+        // }, 
         "cannon": {
           [CANNON.Body.STATIC] : "staticBodies",
           [CANNON.Body.DYNAMIC] : "dynamicBodies"
