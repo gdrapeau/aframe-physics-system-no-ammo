@@ -1,3 +1,4 @@
+console.log('loading aframe-physics-systeme-no-ammo');
 /* global THREE */
 var CANNON = require('cannon-es'),
     CONSTANTS = require('./constants'),
