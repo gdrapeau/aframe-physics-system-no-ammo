@@ -57,7 +57,7 @@ const PhysicsSystem = {
    */
   async init(){
       const ret= this.init2()
-      console.log('physics init is a",ret)
+      console.log("physics init is a",ret)
       return ret
   }
     
