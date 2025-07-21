@@ -267,7 +267,7 @@ const PhysicsSystem = {
    * @param  {number} dt
    */
   tick: function (t, dt) {
-    console.log("physics tick",t,dt)
+    // console.log("physics tick",t,dt)
     if (!this.initialized || !dt) return;
 
     const beforeStartTime = performance.now();
