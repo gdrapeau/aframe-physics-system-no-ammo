@@ -1,4 +1,4 @@
-console.log('loading aframe-physics-systeme-no-ammo v3');
+console.log('loading aframe-physics-systeme-no-ammo v4');
 /* global THREE */
 var CANNON = require('cannon-es'),
     CONSTANTS = require('./constants'),
@@ -469,4 +469,5 @@ const PhysicsSystem = {
 };
 
 globalThis.PhysicsSystem= PhysicsSystem
-module.exports = AFRAME.registerSystem('physics',PhysicsSystem)
+//module.exports = module.exports = AFRAME.registerSystem('physics', {AFRAME.registerSystem('physics',PhysicsSystem)
+module.exports = PhysicsSystem
