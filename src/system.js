@@ -59,7 +59,7 @@ const PhysicsSystem = {
       const ret= this.init2()
       console.log("physics init is a",ret)
       return ret
-  }
+  },
     
   async init2() {
     console.log("init start og physics");
