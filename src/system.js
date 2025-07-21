@@ -468,5 +468,5 @@ const PhysicsSystem = {
   }
 };
 
-globalThis.PhysicsSytem= PhysicsSystem
+globalThis.PhysicsSystem= PhysicsSystem
 module.exports = AFRAME.registerSystem('physics',PhysicsSystem)
