@@ -15,7 +15,7 @@ require('aframe-stats-panel')
 /**
  * Physics system.
  */
-module.exports = AFRAME.registerSystem('physics', {
+const PhysicsSystem = {
   schema: {
     // CANNON.js driver type
     driver:                         { default: 'local', oneOf: ['local', 'worker', 'network', 'ammo'] },
@@ -467,3 +467,6 @@ module.exports = AFRAME.registerSystem('physics', {
     return this.driver.getMaterial(name);
   }
 });
+
+globalThis.PhysicsSytem= PhysicsSystem
+module.exports = AFRAME.registerSystem('physics',PhysicsSystem)
