@@ -55,7 +55,13 @@ const PhysicsSystem = {
   /**
    * Initializes the physics system.
    */
-  async init() {
+  async init(){
+      const ret= this.init2()
+      console.log('physics init is a",ret)
+      return ret
+  }
+    
+  async init2() {
     console.log("init start og physics");
     var data = this.data;
 
